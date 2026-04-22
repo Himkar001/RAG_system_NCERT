@@ -271,15 +271,48 @@ BM25 + Dense Vector Search
 * [x] Transformer chunking
 * [x] Tokenizer comparison
 * [x] Chunk storage
+* [x] BM25 retrieval engine
+* [x] Retrieval evaluation
+* [x] Gemini-powered answer generation
+* [x] End-to-end RAG prototype
+
+### Current Prototype Features
+
+The current prototype supports:
+
+* Asking questions from NCERT chapter content
+* Retrieval of relevant chunks using BM25
+* Grounded prompting using retrieved context
+* Gemini-based answer generation
+* Interactive notebook-based Q&A workflow
+
+### Prototype Workflow
+
+```text
+User Question
+↓
+Query Preprocessing
+↓
+BM25 Retrieval
+↓
+Top Relevant Chunks
+↓
+Prompt Construction
+↓
+Gemini Generation
+↓
+Final Answer
+```
 
 ### Upcoming
 
-* [ ] BM25 Retrieval
-* [ ] Query testing
 * [ ] FastAPI backend
 * [ ] Frontend chatbot
-* [ ] Gemini/LLM integration
-* [ ] Evaluation pipeline
+* [ ] API integration
+* [ ] Multi-chapter ingestion
+* [ ] Semantic retrieval (embeddings)
+* [ ] Hybrid retrieval
+* [ ] Evaluation metrics
 
 ---
 
@@ -306,19 +339,6 @@ This project demonstrates:
 * Educational chatbot architecture
 * End-to-end AI system design
 
----
 
-# 📌 Author
 
-Built as an end-to-end Retrieval-Augmented Generation study assistant project.
-
-GitHub Repo:
-
-`RAG_system_NCERT`
-
----
-
-# 🚧 Status
-
-**Currently in Development**
 
