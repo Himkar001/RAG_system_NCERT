@@ -1,0 +1,6 @@
+pdfplumber
+pymupdf
+transformers
+torch
+rank_bm25
+google-generativeai
