@@ -1,6 +1,7 @@
 # Ignore dataset files
-data/
-
+data/*
+!data/processed/
+!data/processed/**
 # Python cache
 __pycache__/
 *.pyc
