@@ -1,0 +1,141 @@
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: rgb(103, 106, 164);
+}
+
+.main {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 250px;
+  background: rgb(103, 106, 164);
+  border-right: 1px solid #0d0d0d;
+  padding: 15px;
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background: #203a72;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .chat-item {
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #3b3636;
+  }
+
+  .chat-item.active {
+    background: #e0ecff;
+    font-weight: bold;
+  }
+}
+
+/* CHAT AREA */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.header {
+  background: #203a72;
+  padding: 18px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  border-bottom: 1px solid #100f0f;
+}
+
+/* CHAT */
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px;
+}
+
+/* MESSAGE ROW */
+.message-row {
+  display: flex;
+  margin-bottom: 15px;
+
+  &.user {
+    justify-content: flex-end;
+  }
+
+  &.bot {
+    justify-content: flex-start;
+  }
+}
+
+/* MESSAGE */
+.message {
+  padding: 14px 18px;
+  border-radius: 12px;
+  max-width: 60%;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* USER */
+.message-row.user .message {
+  background: #2d4577;
+  color: white;
+}
+
+/* BOT */
+.message-row.bot .message {
+  background: rgb(165, 175, 206);
+  border: 1px solid #151414;
+  color: black;
+}
+
+/* INPUT */
+.input-container {
+  display: flex;
+  padding: 15px;
+  background: rgb(165, 175, 206);
+  border-top: 1px solid #151414;
+
+  input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #1d1b1b;
+  }
+
+  button {
+    margin-left: 10px;
+    padding: 12px 20px;
+    background: #21396d;
+    color: rgb(208, 197, 197);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+}
+
+/* MARKDOWN */
+.message h3 {
+  margin: 10px 0;
+}
+
+.message strong {
+  color: #1a356f;
+}
+
+/* TYPING */
+.typing {
+  opacity: 0.6;
+}
