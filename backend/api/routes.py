@@ -24,7 +24,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel("gemini-2.5-flash")
+model = genai.GenerativeModel("gemini-1.5-flash-latest")
 
 
 # -----------------------------
@@ -83,9 +83,12 @@ def ask_question(request: QueryRequest):
         resolved_query,
         route_output
         )
-    response = model.generate_content(prompt)
+    try:
+        response = model.generate_content(prompt)
+        answer = response.text
 
-    answer = response.text
+    except Exception as e:
+        answer = "⚠️ API limit reached. Please wait a few seconds and try again."
 
     save_to_memory(query, answer)
 
