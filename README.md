@@ -1,343 +1,375 @@
-# 📘 NCERT RAG Study Assistant
+# Stage 2 README — NCERT Smart Assistant
 
-A retrieval-based AI study assistant built using Retrieval-Augmented Generation (RAG) concepts over NCERT Science chapters.
+You can create a new file:
 
-This project focuses on building a complete end-to-end pipeline:
+```text id="7h2jgl"
+README_STAGE2.md
+```
 
-* PDF extraction
+and paste this content.
+
+---
+
+# NCERT Smart Assistant — Stage 2
+
+## Overview
+
+Stage 2 focuses on transforming the initial NCERT RAG prototype into a more intelligent and modular AI tutoring system.
+
+The system now supports:
+
+* Semantic retrieval
+* Hybrid retrieval
+* Equation handling
+* Numerical problem routing
+* Image retrieval
+* Memory handling
+* FastAPI backend
+* React frontend interface
+
+This stage establishes the backend and frontend architecture required for scaling the project into a complete NCERT AI tutor.
+
+---
+
+# Stage 1 vs Stage 2
+
+## Stage 1 (Prototype)
+
+The Stage 1 prototype included:
+
+* PDF extraction using `pdfplumber`
 * Text cleaning
-* Tokenizer-aware chunking
-* Retrieval system (BM25)
-* Backend API
-* Frontend chatbot UI
-* Future semantic retrieval + LLM response generation
+* BERT tokenizer-based chunking
+* BM25 retrieval
+* Gemini-based answer generation
+
+### Limitations
+
+* Weak semantic understanding
+* Poor handling of equations
+* No numerical solving
+* No image retrieval
+* No memory
+* Large chunk retrieval noise
+* Basic notebook-only implementation
 
 ---
 
-# 🚀 Project Goal
+## Stage 2 Goals
 
-Build an intelligent study assistant capable of answering questions from NCERT chapters by retrieving relevant textbook content.
+Stage 2 was designed to solve these limitations by introducing:
 
-Example:
-
-**User Query:**
-
-> What is Newton’s First Law of Motion?
-
-**System Flow:**
-
-1. Retrieve relevant chunks from NCERT text
-2. Pass retrieved context to an LLM
-3. Generate grounded answer
+* Modular backend architecture
+* Intelligent query routing
+* Semantic retrieval
+* Hybrid retrieval
+* Equation and numerical handlers
+* Image retrieval pipeline
+* Frontend chat interface
+* API-based interaction
 
 ---
 
-# 🧠 Current Chapter Used
+# Project Architecture
 
-### Chapter:
-
-**Force and Laws of Motion**
-
-Source:
-
-* NCERT Science textbook
-
----
-
-# 🏗️ Project Architecture
-
-```text
-PDF
-↓
-Text Extraction
-↓
-Cleaning
-↓
-Tokenizer-Based Chunking
-↓
-Chunks JSON
-↓
-BM25 Retrieval
-↓
-Backend API
-↓
-Frontend Chatbot
-↓
-LLM Response Generation
+```text id="l2y6yk"
+User Query
+    ↓
+Frontend (React)
+    ↓
+FastAPI Backend
+    ↓
+Query Router
+    ↓
+┌─────────────────────┐
+│ Retrieval Handlers  │
+├─────────────────────┤
+│ BM25 Retrieval      │
+│ Semantic Retrieval  │
+│ Hybrid Retrieval    │
+│ Equation Handler    │
+│ Numerical Handler   │
+│ Image Handler       │
+│ Memory Handler      │
+└─────────────────────┘
+    ↓
+Prompt Builder
+    ↓
+Gemini API
+    ↓
+Frontend Response
 ```
 
 ---
 
-# 📂 Project Structure
+# Features Implemented
 
-```text
-retrieval-study-assistant/
+## 1. Semantic Retrieval
+
+Implemented semantic search using transformer embeddings.
+
+### Goal
+
+Improve retrieval for conceptually similar queries.
+
+### Example
+
+```text id="2thupx"
+Query:
+"Why does an object resist change?"
+
+Traditional BM25:
+May fail to retrieve "inertia"
+
+Semantic Retrieval:
+Correctly retrieves inertia-related chunks
+```
+
+---
+
+## 2. Hybrid Retrieval
+
+Combined:
+
+* BM25 keyword retrieval
+* Semantic similarity retrieval
+
+### Goal
+
+Improve both precision and recall.
+
+---
+
+## 3. Equation Handler
+
+Implemented routing and handling for equation-related queries.
+
+### Examples
+
+```text id="y9jzfc"
+Explain F = ma
+Explain v = u + at
+Equation for momentum
+```
+
+---
+
+## 4. Numerical Handler
+
+Implemented basic numerical problem solving.
+
+### Examples
+
+```text id="d0db1n"
+Find force when mass = 5kg and acceleration = 2m/s²
+```
+
+---
+
+## 5. Image Retrieval
+
+Implemented OCR-based image retrieval system.
+
+### Pipeline
+
+* Extract rendered PDF pages
+* OCR text extraction
+* Metadata generation
+* Query-image matching
+
+---
+
+## 6. Memory Handling
+
+Implemented short-term conversational memory.
+
+### Goal
+
+Enable context-aware conversations.
+
+---
+
+## 7. FastAPI Backend
+
+Built modular backend using FastAPI.
+
+### Features
+
+* Query routing
+* API endpoints
+* CORS support
+* Static file serving
+* Modular architecture
+
+---
+
+## 8. React Frontend
+
+Built frontend chat interface using React + Vite.
+
+### Features
+
+* ChatGPT-style interface
+* Sidebar chats
+* Markdown rendering
+* Loading states
+* Chat memory
+* API integration
+
+---
+
+# Current Folder Structure
+
+```text id="7i1f24"
+RAG_system_NCERT/
+│
+├── backend/
+│   ├── api/
+│   ├── handlers/
+│   ├── retrieval/
+│   ├── vectorstore/
+│   ├── app.py
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
 │
 ├── data/
 │   ├── raw/
-│   │   └── force_laws_motion.pdf
-│   │
-│   └── processed/
-│       ├── cleaned_text.txt
-│       └── chunks.json
+│   ├── processed/
+│   │   ├── rendered_pages/
+│   │   ├── image_metadata.json
 │
 ├── notebooks/
-│   └── rag_pipeline.ipynb
-│
-├── backend/
-│   ├── main.py
-│   └── utils.py
-│
-├── frontend/
-│   └── (React App)
-│
-├── src/
-│   └── reusable logic
 │
 ├── outputs/
 │
-├── README.md
-├── hld.md
 ├── requirements.txt
-└── .gitignore
+│
+└── README_STAGE2.md
 ```
 
 ---
 
-# 🔬 Stage 1 — Corpus Engineering
+# Current Known Issues
 
-Completed:
+The following issues are intentionally deferred to Stage 3:
 
-### ✔ PDF Extraction
-
-* Used `pdfplumber`
-* Extracted raw text from NCERT PDF
-
-### ✔ Cleaning
-
-Removed:
-
-* page markers
-* repeated uppercase noise
-* figure artifacts
-* spacing inconsistencies
-
-### ✔ Chunking
-
-Implemented:
-
-* transformer tokenizer-based chunking
-* chunk overlap
-* metadata creation
+* Image rendering issues
+* Undefined equation response fields
+* Numerical parsing limitations
+* Momentum solver limitations
+* Query routing edge cases
+* Gemini API quota handling
+* UI refinements
+* Full-book scaling
+* Deployment pipeline
 
 ---
 
-# 🧩 Chunking Strategy
+# Stage 3 Goals
 
-### Tokenizer Used
+Stage 3 will focus on:
 
-* BERT Tokenizer (`bert-base-uncased`)
+## 1. Full NCERT Book Scaling
 
-### Chunk Parameters
-
-| Parameter  | Value                    |
-| ---------- | ------------------------ |
-| Chunk Size | 350 tokens               |
-| Overlap    | 60 tokens                |
-| Method     | Transformer Tokenization |
+* Multiple chapters
+* Complete textbook ingestion
+* Better metadata handling
 
 ---
 
-# 🧠 Why Tokenizer-Based Chunking?
+## 2. Numerical Solver Improvements
 
-Instead of splitting text by words, chunking is performed using transformer tokens.
-
-Benefits:
-
-* Better alignment with LLM context windows
-* Improved retrieval stability
-* Better handling of scientific text
-* More consistent chunk boundaries
+* Automatic variable extraction
+* Advanced formula routing
+* Step-by-step solutions
 
 ---
 
-# 🔍 Tokenizer Comparison Study
+## 3. Image System Improvements
 
-Compared:
-
-1. BERT Tokenizer (WordPiece)
-2. GPT-2 Tokenizer (BPE)
-3. T5 Tokenizer (SentencePiece)
-
-Comparison criteria:
-
-* token count
-* decimal handling
-* scientific terminology splitting
-* chunk compatibility
-
-### Result
-
-BERT WordPiece tokenizer performed best for:
-
-* educational text
-* lexical retrieval
-* scientific terminology
+* Proper frontend image rendering
+* Diagram-specific retrieval
+* Better OCR matching
 
 ---
 
-# 📦 Saved Outputs
+## 4. UI Improvements
 
-Generated files:
-
-### `cleaned_text.txt`
-
-Stores cleaned chapter text.
-
-### `chunks.json`
-
-Stores retrieval-ready tokenized chunks.
-
-Example chunk format:
-
-```json
-{
-  "id": 0,
-  "text": "chunk text",
-  "chapter": "Force and Laws of Motion",
-  "token_count": 350
-}
-```
+* Premium UI design
+* Animations
+* Better responsiveness
+* Improved chat experience
 
 ---
 
-# 🧠 Retrieval Strategy
+## 5. Gemini Stability
 
-Planned retrieval pipeline:
-
-### Stage 2
-
-* BM25 Retrieval
-
-### Stage 3
-
-* Semantic Retrieval (Embeddings)
-
-### Stage 4
-
-* Hybrid Retrieval
-
-```text
-BM25 + Dense Vector Search
-```
+* Retry mechanisms
+* Fallback responses
+* Reduced API dependency
 
 ---
 
-# 🛠️ Tech Stack
-
-### Libraries
-
-* pdfplumber
-* transformers
-* torch
-* rank_bm25
-* json
-* regex
-
-### Backend
-
-* Python
-* FastAPI (planned)
+## 6. Deployment
 
 ### Frontend
 
-* React (planned)
+* Vercel deployment
 
-### Retrieval
+### Backend
 
+* Render / Railway deployment
+
+---
+
+# Technologies Used
+
+## Backend
+
+* FastAPI
+* LangChain
+* SentenceTransformers
 * BM25
-* Tokenizer-aware chunks
+* ChromaDB
+* Gemini API
 
 ---
 
-# 📈 Current Progress
+## Frontend
 
-### Completed
-
-* [x] Project setup
-* [x] HLD structure
-* [x] PDF extraction
-* [x] Cleaning pipeline
-* [x] Transformer chunking
-* [x] Tokenizer comparison
-* [x] Chunk storage
-* [x] BM25 retrieval engine
-* [x] Retrieval evaluation
-* [x] Gemini-powered answer generation
-* [x] End-to-end RAG prototype
-
-### Current Prototype Features
-
-The current prototype supports:
-
-* Asking questions from NCERT chapter content
-* Retrieval of relevant chunks using BM25
-* Grounded prompting using retrieved context
-* Gemini-based answer generation
-* Interactive notebook-based Q&A workflow
-
-### Prototype Workflow
-
-```text
-User Question
-↓
-Query Preprocessing
-↓
-BM25 Retrieval
-↓
-Top Relevant Chunks
-↓
-Prompt Construction
-↓
-Gemini Generation
-↓
-Final Answer
-```
-
-### Upcoming
-
-* [ ] FastAPI backend
-* [ ] Frontend chatbot
-* [ ] API integration
-* [ ] Multi-chapter ingestion
-* [ ] Semantic retrieval (embeddings)
-* [ ] Hybrid retrieval
-* [ ] Evaluation metrics
+* React
+* Vite
+* SCSS
+* ReactMarkdown
 
 ---
 
-# 🎯 Future Improvements
+## NLP / Retrieval
 
 * Semantic embeddings
-* Hybrid search
-* Query intent routing
-* Chapter expansion
-* Multi-chapter retrieval
-* Citation grounding
-* Answer confidence scoring
+* Hybrid retrieval
+* OCR-based image retrieval
 
 ---
 
-# 🧠 Learning Objectives
+# Current Status
 
-This project demonstrates:
+```text id="m1yzut"
+Stage 1 → Completed
+Stage 2 → Completed (Core Architecture)
+Stage 3 → Planned
+```
 
-* Retrieval-Augmented Generation fundamentals
-* Corpus engineering
-* Tokenizer-aware chunking
-* Retrieval system design
-* Educational chatbot architecture
-* End-to-end AI system design
+---
+
+# Author
+
+Himkar Vashistha
+
+BTech Data Science Engineering
+PG in Agentic AI & AIML Engineering — IIT Gandhinagar
 
 
 
