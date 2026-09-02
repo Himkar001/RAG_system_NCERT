@@ -1,376 +1,180 @@
-# Stage 2 README — NCERT Smart Assistant
+# Parishiksha — AI-Powered NCERT Learning Platform
 
-You can create a new file:
+![Parishiksha Banner](https://img.shields.io/badge/Status-Active-brightgreen) ![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![React](https://img.shields.io/badge/React-18-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-teal) ![Gemini](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-orange)
 
-```text id="7h2jgl"
-README_STAGE2.md
+![Parishiksha UI](docs/assets/ui_welcome.png)
+
+**Parishiksha** is an advanced, multimodal Retrieval-Augmented Generation (RAG) system specifically designed for NCERT Class 9 Science. It serves as an intelligent AI tutor capable of understanding conceptual questions, solving numerical problems, explaining physics equations, and retrieving relevant textbook diagrams.
+
+---
+
+## 🚀 Key Features
+
+* **Advanced Hybrid Retrieval Pipeline**: Combines BM25 (keyword search) and HuggingFace semantic embeddings using Reciprocal Rank Fusion (RRF) for high-precision context retrieval.
+* **HyDE (Hypothetical Document Embeddings)**: Generates hypothetical textbook paragraphs on the fly to improve retrieval recall for complex, conceptual queries.
+* **Multimodal Image Retrieval**: Extracts, OCRs, and semantically indexes diagrams from the NCERT PDFs. Automatically retrieves and displays relevant diagrams in the chat UI.
+* **Intelligent Query Routing**: Uses an LLM-based query router to analyze intents (conceptual, numerical, equation, image) and route the query to the appropriate specialized pipeline.
+* **Streaming Responses**: Real-time markdown streaming from Google Gemini, providing a fast, ChatGPT-like experience.
+* **Persistent Conversational Memory**: SQLite-backed session storage allows the AI to remember the context of follow-up queries.
+* **Premium User Interface**: A beautifully designed, dark-themed UI featuring suggestion chips, source citations, collapsible diagram cards, and LaTeX mathematical rendering.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    %% Frontend
+    Client[User Browser] -->|WebSocket / HTTP| FastAPI[FastAPI Backend]
+
+    %% Backend Router & DB
+    FastAPI --> MemoryStore[(SQLite Memory)]
+    FastAPI --> QueryRouter{LLM Query Router}
+
+    %% Routing
+    QueryRouter -->|Conceptual| HyDE[HyDE + Hybrid Retrieval]
+    QueryRouter -->|Numerical| NumSolver[Step-by-Step Solver]
+    QueryRouter -->|Equation| EqHandler[Equation Handler]
+    QueryRouter -->|Image| ImgHandler[Diagram Retriever]
+
+    %% Retrievers
+    HyDE --> BM25(BM25 Search)
+    HyDE --> Semantic(Semantic Search)
+    ImgHandler --> Semantic
+    
+    %% Storage
+    BM25 --> DocStore[(JSON Document Store)]
+    Semantic --> Chroma[(ChromaDB Vector Store)]
+
+    %% Generation
+    HyDE -.-> Fusion[Reciprocal Rank Fusion]
+    Fusion --> ContextBuilder[Prompt Builder]
+    NumSolver --> ContextBuilder
+    EqHandler --> ContextBuilder
+    ImgHandler --> ContextBuilder
+
+    ContextBuilder --> Gemini[Google Gemini LLM]
+    Gemini -->|Streaming Reply| FastAPI
+    FastAPI -->|Display Answer + Citations| Client
 ```
 
-and paste this content.
+*(For a deeper dive into the system architecture, please see [High Level Design (HLD)](docs/HLD.md) and [Low Level Design (LLD)](docs/LLD.md))*
 
 ---
 
-# NCERT Smart Assistant — Stage 2
+## 🛠️ Prerequisites
 
-## Overview
+Before you begin, ensure you have the following installed:
 
-Stage 2 focuses on transforming the initial NCERT RAG prototype into a more intelligent and modular AI tutoring system.
-
-The system now supports:
-
-* Semantic retrieval
-* Hybrid retrieval
-* Equation handling
-* Numerical problem routing
-* Image retrieval
-* Memory handling
-* FastAPI backend
-* React frontend interface
-
-This stage establishes the backend and frontend architecture required for scaling the project into a complete NCERT AI tutor.
+1. **Python 3.10+**
+2. **Node.js (v18+) & npm**
+3. **Google Gemini API Key** (You can obtain one from Google AI Studio)
+4. (Optional) **Docker Desktop** if you prefer containerized deployment.
 
 ---
 
-# Stage 1 vs Stage 2
+## 💻 Local Setup & Installation
 
-## Stage 1 (Prototype)
+### 1. Clone & Configure Environment
 
-The Stage 1 prototype included:
+```bash
+git clone https://github.com/yourusername/RAG_system_NCERT.git
+cd RAG_system_NCERT
 
-* PDF extraction using `pdfplumber`
-* Text cleaning
-* BERT tokenizer-based chunking
-* BM25 retrieval
-* Gemini-based answer generation
-
-### Limitations
-
-* Weak semantic understanding
-* Poor handling of equations
-* No numerical solving
-* No image retrieval
-* No memory
-* Large chunk retrieval noise
-* Basic notebook-only implementation
-
----
-
-## Stage 2 Goals
-
-Stage 2 was designed to solve these limitations by introducing:
-
-* Modular backend architecture
-* Intelligent query routing
-* Semantic retrieval
-* Hybrid retrieval
-* Equation and numerical handlers
-* Image retrieval pipeline
-* Frontend chat interface
-* API-based interaction
-
----
-
-# Project Architecture
-
-```text id="l2y6yk"
-User Query
-    ↓
-Frontend (React)
-    ↓
-FastAPI Backend
-    ↓
-Query Router
-    ↓
-┌─────────────────────┐
-│ Retrieval Handlers  │
-├─────────────────────┤
-│ BM25 Retrieval      │
-│ Semantic Retrieval  │
-│ Hybrid Retrieval    │
-│ Equation Handler    │
-│ Numerical Handler   │
-│ Image Handler       │
-│ Memory Handler      │
-└─────────────────────┘
-    ↓
-Prompt Builder
-    ↓
-Gemini API
-    ↓
-Frontend Response
+# Create a .env file in the root directory
+echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
 ```
 
+### 2. Backend Setup
+
+```bash
+# Create and activate a virtual environment
+python -m venv venv
+venv\Scripts\activate  # On Windows
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# (First Time Only) Run Data Ingestion Pipeline to chunk PDFs and build ChromaDB
+python src/ingestion/ingest_pipeline.py
+
+# Start the FastAPI server
+uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
+```
+*The backend API will be available at `http://localhost:8000`*
+
+### 3. Frontend Setup
+
+Open a new terminal window:
+
+```bash
+cd frontend
+npm install
+
+# Start the React Vite development server
+npm run dev
+```
+*The web application will be accessible at `http://localhost:5173`*
+
 ---
 
-# Features Implemented
+## 🐳 Docker Setup
 
-## 1. Semantic Retrieval
+For a streamlined, one-click deployment using Docker Compose:
 
-Implemented semantic search using transformer embeddings.
-
-### Goal
-
-Improve retrieval for conceptually similar queries.
-
-### Example
-
-```text id="2thupx"
-Query:
-"Why does an object resist change?"
-
-Traditional BM25:
-May fail to retrieve "inertia"
-
-Semantic Retrieval:
-Correctly retrieves inertia-related chunks
+```bash
+# Ensure your .env file is present in the root directory
+# Build and run the containers in detached mode
+docker-compose up --build -d
 ```
 
----
+* **Frontend**: `http://localhost:80`
+* **Backend API**: `http://localhost:8000`
 
-## 2. Hybrid Retrieval
-
-Combined:
-
-* BM25 keyword retrieval
-* Semantic similarity retrieval
-
-### Goal
-
-Improve both precision and recall.
-
----
-
-## 3. Equation Handler
-
-Implemented routing and handling for equation-related queries.
-
-### Examples
-
-```text id="y9jzfc"
-Explain F = ma
-Explain v = u + at
-Equation for momentum
+To view logs:
+```bash
+docker-compose logs -f
+```
+To stop the services:
+```bash
+docker-compose down
 ```
 
 ---
 
-## 4. Numerical Handler
+## 📂 Project Structure
 
-Implemented basic numerical problem solving.
-
-### Examples
-
-```text id="d0db1n"
-Find force when mass = 5kg and acceleration = 2m/s²
-```
-
----
-
-## 5. Image Retrieval
-
-Implemented OCR-based image retrieval system.
-
-### Pipeline
-
-* Extract rendered PDF pages
-* OCR text extraction
-* Metadata generation
-* Query-image matching
-
----
-
-## 6. Memory Handling
-
-Implemented short-term conversational memory.
-
-### Goal
-
-Enable context-aware conversations.
-
----
-
-## 7. FastAPI Backend
-
-Built modular backend using FastAPI.
-
-### Features
-
-* Query routing
-* API endpoints
-* CORS support
-* Static file serving
-* Modular architecture
-
----
-
-## 8. React Frontend
-
-Built frontend chat interface using React + Vite.
-
-### Features
-
-* ChatGPT-style interface
-* Sidebar chats
-* Markdown rendering
-* Loading states
-* Chat memory
-* API integration
-
----
-
-# Current Folder Structure
-
-```text id="7i1f24"
+```text
 RAG_system_NCERT/
-│
-├── backend/
-│   ├── api/
-│   ├── handlers/
-│   ├── retrieval/
-│   ├── vectorstore/
-│   ├── app.py
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│
-├── data/
-│   ├── raw/
-│   ├── processed/
-│   │   ├── rendered_pages/
-│   │   ├── image_metadata.json
-│
-├── notebooks/
-│
-├── outputs/
-│
-├── requirements.txt
-│
-└── README_STAGE2.md
+├── backend/                  # FastAPI Application Core
+│   ├── api/                  # Route definitions (streaming, REST)
+│   ├── database/             # SQLite conversational memory store
+│   ├── handlers/             # Query processors (Equations, Images, Numerical)
+│   ├── retrieval/            # BM25, Semantic, HyDE, RRF logic
+│   └── vectorstore/          # ChromaDB Singleton clients
+├── frontend/                 # React + Vite UI
+│   ├── src/components/       # UI Components (Chat interface, Diagrams, Markdown)
+│   └── src/App.jsx           # Main entry point & state management
+├── src/                      # Data Pipeline
+│   ├── chunking/             # Semantic & Parent-Child Splitters
+│   └── ingestion/            # PDF extractors, PyMuPDF rendering
+├── docs/                     # Architecture & API Specifications
+├── data/                     # Raw PDFs and extracted images
+├── chroma_db/                # Persistent Vector DB storage
+└── docker-compose.yml        # Docker orchestration configuration
 ```
 
 ---
 
-# Current Known Issues
+## 📚 Documentation Directory
 
-The following issues are intentionally deferred to Stage 3:
+For professional insights into how the system is engineered, please refer to the documents in the `docs/` folder:
 
-* Image rendering issues
-* Undefined equation response fields
-* Numerical parsing limitations
-* Momentum solver limitations
-* Query routing edge cases
-* Gemini API quota handling
-* UI refinements
-* Full-book scaling
-* Deployment pipeline
+* **[HLD.md](docs/HLD.md)** - High-Level Architecture, component interactions, and scalability.
+* **[LLD.md](docs/LLD.md)** - Low-Level schema definitions, vector index structures, and API data flow.
+* **[API_SPECIFICATION.md](docs/API_SPECIFICATION.md)** - Comprehensive endpoints documentation.
 
 ---
 
-# Stage 3 Goals
-
-Stage 3 will focus on:
-
-## 1. Full NCERT Book Scaling
-
-* Multiple chapters
-* Complete textbook ingestion
-* Better metadata handling
-
----
-
-## 2. Numerical Solver Improvements
-
-* Automatic variable extraction
-* Advanced formula routing
-* Step-by-step solutions
-
----
-
-## 3. Image System Improvements
-
-* Proper frontend image rendering
-* Diagram-specific retrieval
-* Better OCR matching
-
----
-
-## 4. UI Improvements
-
-* Premium UI design
-* Animations
-* Better responsiveness
-* Improved chat experience
-
----
-
-## 5. Gemini Stability
-
-* Retry mechanisms
-* Fallback responses
-* Reduced API dependency
-
----
-
-## 6. Deployment
-
-### Frontend
-
-* Vercel deployment
-
-### Backend
-
-* Render / Railway deployment
-
----
-
-# Technologies Used
-
-## Backend
-
-* FastAPI
-* LangChain
-* SentenceTransformers
-* BM25
-* ChromaDB
-* Gemini API
-
----
-
-## Frontend
-
-* React
-* Vite
-* SCSS
-* ReactMarkdown
-
----
-
-## NLP / Retrieval
-
-* Semantic embeddings
-* Hybrid retrieval
-* OCR-based image retrieval
-
----
-
-# Current Status
-
-```text id="m1yzut"
-Stage 1 → Completed
-Stage 2 → Completed (Core Architecture)
-Stage 3 → Planned
-```
-
----
-
-# Author
-
-Himkar Vashistha
-
-BTech Data Science Engineering
-PG in Agentic AI & AIML Engineering — IIT Gandhinagar
-
-
-
-
+**Author**: Himkar Vashistha  
+*BTech Data Science Engineering | PG in Agentic AI & AIML Engineering (IIT Gandhinagar)*

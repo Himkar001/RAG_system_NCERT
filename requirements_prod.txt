@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-dotenv
+google-generativeai
+langchain
+langchain-chroma
+langchain-huggingface
+sentence-transformers
+rank-bm25
+chromadb
+pydantic-settings
+pdfplumber
+pymupdf
+sympy
+requests
+pydantic
