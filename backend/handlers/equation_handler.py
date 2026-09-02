@@ -103,24 +103,36 @@ def extract_equation(query):
     return None
 
 def equation_lookup(query):
-
     equation = extract_equation(query)
 
     if equation is None:
+        # No specific equation found — return a helpful text response
+        return (
+            "I couldn't detect a specific equation in your query. "
+            "Try asking directly, e.g. *'What is the formula for F = ma?'* or "
+            "*'Write the equation v = u + at'*."
+        )
 
-        return {
-
-            "error": "No equation detected"
-        }
-
-    equation = equation.replace(" ", "")
+    equation_clean = equation.replace(" ", "")
     for key in equation_db:
+        if key.replace(" ", "") == equation_clean:
+            entry = equation_db[key]
+            # Format as a clean markdown string
+            lines = [
+                f"## {entry.get('name', equation)}",
+                f"**Formula:** `{entry.get('formula', equation)}`",
+            ]
+            if entry.get("topic"):
+                lines.append(f"**Topic:** {entry['topic']}")
+            if entry.get("description"):
+                lines.append(f"\n{entry['description']}")
+            if entry.get("variables"):
+                lines.append("\n**Variables:**")
+                for var, meaning in entry["variables"].items():
+                    lines.append(f"- **{var}** — {meaning}")
+            return "\n".join(lines)
 
-        if key.replace(" ", "") == equation:
-
-            return equation_db[key]
-
-    return {
-
-        "error": "Equation not found"
-    }
+    return (
+        f"The equation `{equation}` is not in my lookup database yet. "
+        "Try asking a conceptual question like *'Explain Newton's second law'* for a detailed answer."
+    )

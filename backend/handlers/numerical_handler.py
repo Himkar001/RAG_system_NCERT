@@ -45,120 +45,52 @@ numerical_equations = {
 
 }
 
-def extract_numbers(query):
+import os
+import json
+import google.generativeai as genai
+from dotenv import load_dotenv
+from backend.handlers.step_solver import solve_step_by_step
 
-    numbers = re.findall(r"\d+\.?\d*", query)
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY, transport="rest")
+model = genai.GenerativeModel("gemini-3.6-flash")
 
-    return [float(n) for n in numbers]
+def extract_variables_llm(query):
+    prompt = f"""
+Extract the physical quantities and their values from the following physics problem.
+Return ONLY a valid JSON dictionary where keys are variable names (e.g. mass, initial_velocity, time) and values are the numerical values (as floats).
+Do not include units in the values, just the numbers.
+Query: "{query}"
+"""
+    try:
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        if text.startswith("```json"):
+            text = text[7:]
+        if text.endswith("```"):
+            text = text[:-3]
+        return json.loads(text.strip())
+    except Exception as e:
+        print("Error extracting variables:", e)
+        return {}
 
 def detect_numerical_type(query):
-
     query_lower = query.lower()
-
     for eq_name, eq_info in numerical_equations.items():
-
         for keyword in eq_info["keywords"]:
-
             if keyword in query_lower:
-
                 return eq_name
-
     return None
 
-def solve_force(mass, acceleration):
-
-    force = mass * acceleration
-
-    return {
-        "formula": "F = ma",
-        "result": f"Force = {force} N"
-    }
-
-
-def solve_momentum(mass, velocity):
-
-    momentum = mass * velocity
-
-    return {
-        "formula": "p = mv",
-        "result": f"Momentum = {momentum} kg·m/s"
-    }
-
-
-def solve_velocity(initial_velocity, acceleration, time):
-
-    final_velocity = initial_velocity + (acceleration * time)
-
-    return {
-        "formula": "v = u + at",
-        "result": f"Final Velocity = {final_velocity} m/s"
-    }
-
-
-def solve_impulse(force, time):
-
-    impulse = force * time
-
-    return {
-        "formula": "Impulse = Force × Time",
-        "result": f"Impulse = {impulse} Ns"
-    }
-
-
-def solve_impulse_momentum(initial_momentum, final_momentum):
-
-    impulse = final_momentum - initial_momentum
-
-    return {
-        "formula": "Impulse = Change in Momentum",
-        "result": f"Impulse = {impulse} kg·m/s"
-    }
-
-
-def solve_rate_of_change(mass, initial_velocity, final_velocity, time):
-
-    force = mass * (final_velocity - initial_velocity) / time
-
-    return {
-        "formula": "F = (mv - mu)/t",
-        "result": f"Force = {force} N"
-    }
-
 def numerical_router(query):
-
     equation_type = detect_numerical_type(query)
-
     if equation_type is None:
         return "No matching numerical equation found"
-
-    values = extract_numbers(query)
-
-    try:
-
-        if equation_type == "force":
-
-            return solve_force(values[0], values[1])
-
-        elif equation_type == "momentum":
-
-            return solve_momentum(values[0], values[1])
-
-        elif equation_type == "velocity":
-
-            return solve_velocity(values[0], values[1], values[2])
-
-        elif equation_type == "impulse_force_time":
-
-            return solve_impulse(values[0], values[1])
-
-        elif equation_type == "impulse_momentum":
-
-            return solve_impulse_momentum(values[0], values[1])
-
-        elif equation_type == "rate_of_change_of_momentum":
-
-            return solve_rate_of_change(values[0], values[1], values[2], values[3])
-        
-    except:
-
+    
+    variables_dict = extract_variables_llm(query)
+    if not variables_dict:
         return "Not enough numerical values found in query"
+        
+    return solve_step_by_step(query, equation_type, variables_dict)

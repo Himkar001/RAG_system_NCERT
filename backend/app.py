@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from backend.api.routes import router
+from backend.api.stream_routes import stream_router
 
 app = FastAPI(
     title="NCERT RAG Study Assistant",
@@ -16,7 +17,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -34,6 +35,7 @@ app.mount(
 # Register API Routes
 # -----------------------------
 app.include_router(router)
+app.include_router(stream_router)
 
 # -----------------------------
 # Root Endpoint
