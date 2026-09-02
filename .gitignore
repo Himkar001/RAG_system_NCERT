@@ -1,27 +1,12 @@
-# Ignore dataset files
-data/*
-!data/processed/
-!data/processed/**
-
-# Environment variables
-.env
-
-# Vector database
-chroma_db/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Notebook checkpoints
-.ipynb_checkpoints/
-
-# OS files
-.DS_Store
-Thumbs.db
-
 venv/
 __pycache__/
 *.pyc
 .env
-.ipynb_checkpoints/
+data/processed/rendered_pages/*.png
+chroma_db/
+backend/database/conversations.db
+*.db
+logs/
+node_modules/
+dist/
+.DS_Store
